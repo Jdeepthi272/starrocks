@@ -1,0 +1,38 @@
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+class ThreadSafeCounter {
+    private final AtomicInteger counter = new AtomicInteger(0);
+
+    // Increment the counter
+    public void increment() {
+        counter.incrementAndGet();
+    }
+
+    // Get the current counter value
+    public int getValue() {
+        return counter.get();
+    }
+
+    public static void main(String[] args) {
+        ThreadSafeCounter counter = new ThreadSafeCounter();
+        int numberOfThreads = 10;
+        ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
+
+        // Submit 10 tasks to increment the counter
+        for (int i = 0; i < numberOfThreads; i++) {
+            executor.submit(counter::increment);
+        }
+
+        // Shutdown the executor
+        executor.shutdown();
+
+        // Wait until all tasks are finished
+        while (!executor.isTerminated()) {
+        }
+
+        // Output the counter value
+        System.out.println("Final Counter Value: " + counter.getValue());
+    }
+}
